@@ -27,9 +27,11 @@ export class DefaultInterceptor implements HttpInterceptor {
     }
 
     private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
+        console.log('handleData');
         // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
         this.injector.get(_HttpClient).end();
         // 业务处理：一些通用操作
+        console.log('event =', event);
         switch (event.status) {
             case 200:
                 // 业务层级错误处理，以下假如响应体的 `status` 若不为 `0` 表示业务级异常
@@ -42,9 +44,11 @@ export class DefaultInterceptor implements HttpInterceptor {
                 //     // this.http.get('/').subscribe() 并不会触发
                 //     return ErrorObservable.throw(event);
                 // }
+                //this.goTo('/users');
                 break;
             case 401: // 未登录状态码
-                this.goTo('/passport/login');
+                console.log('event =', event);
+                //this.goTo('/passport/login');
                 break;
             case 403:
             case 404:
@@ -58,17 +62,21 @@ export class DefaultInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler):
         Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
 
+        console.log('url =', req.url);
         // 统一加上服务端前缀
         let url = req.url;
         if (!url.startsWith('https://') && !url.startsWith('http://')) {
             url = environment.SERVER_URL + url;
         }
 
+        console.log('url =', url);
+
         const newReq = req.clone({
             url: url
         });
         return next.handle(newReq).pipe(
                     mergeMap((event: any) => {
+                        console.log('event-- =', event);
                         // 允许统一对请求错误处理，这是因为一个请求若是业务上错误的情况下其HTTP请求的状态是200的情况下需要
                         if (event instanceof HttpResponse && event.status === 200)
                             return this.handleData(event);

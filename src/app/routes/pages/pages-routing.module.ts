@@ -8,6 +8,9 @@ import { ForgetComponent } from './forget/forget.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { Page404Component } from './404/404.component';
 import { Page500Component } from './500/500.component';
+import { TeamComponent } from './team/team.component';
+import { ProjectComponent } from './project/project.component';
+import { TemplateComponent } from './template/template.component';
 
 const routes: Routes = [
     { path: 'register', component: RegisterComponent },
@@ -16,7 +19,10 @@ const routes: Routes = [
     { path: 'lock', component: LockComponent },
     { path: 'maintenance', component: MaintenanceComponent },
     { path: '404', component: Page404Component },
-    { path: '500', component: Page500Component }
+    { path: '500', component: Page500Component },
+    { path: 'team', component: TeamComponent },
+    { path: 'project', component: ProjectComponent },
+    { path: 'template', component: TemplateComponent }
 ];
 
 @NgModule({

@@ -98,5 +98,12 @@
     "pro-user": "账户",
     "pro-login": "登录",
     "pro-register": "注册",
-    "pro-register-result": "注册结果"
+    "pro-register-result": "注册结果",
+    "platformUsers": "平台用户",
+    "userlist": "用户列表",
+    "currentUser": "当前用户",
+    "function": "主功能",
+    "myTeams": "我的团队",
+    "myProjects": "我的项目",
+    "myTemplates": "我的模版"
 }

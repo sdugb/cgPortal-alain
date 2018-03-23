@@ -6,12 +6,14 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
+import { PassportService } from '../passport.service';
+import { LocalStorage } from '../../../core/local.storage';
 
 @Component({
     selector: 'passport-login',
     templateUrl: './login.component.html',
     styleUrls: [ './login.component.less' ],
-    providers: [ SocialService ]
+    providers: [ SocialService, LocalStorage, PassportService ]
 })
 export class UserLoginComponent implements OnDestroy {
 
@@ -24,12 +26,14 @@ export class UserLoginComponent implements OnDestroy {
         fb: FormBuilder,
         private router: Router,
         public msg: NzMessageService,
+        private _localStorage: LocalStorage,
+        private _passportService: PassportService,
         private settingsService: SettingsService,
         private socialService: SocialService,
         @Optional() @Inject(ReuseTabService) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         this.form = fb.group({
-            userName: [null, [Validators.required, Validators.minLength(5)]],
+            userName: [null, [Validators.required, Validators.minLength(2)]],
             password: [null, Validators.required],
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
             captcha: [null, [Validators.required]],
@@ -68,6 +72,7 @@ export class UserLoginComponent implements OnDestroy {
 
     submit() {
         this.error = '';
+/*
         if (this.type === 0) {
             this.userName.markAsDirty();
             this.password.markAsDirty();
@@ -82,7 +87,7 @@ export class UserLoginComponent implements OnDestroy {
         setTimeout(() => {
             this.loading = false;
             if (this.type === 0) {
-                if (this.userName.value !== 'admin' || this.password.value !== '888888') {
+                if (this.userName.value !== 'gb' || this.password.value !== 'gbzz01') {
                     this.error = `账户或密码错误`;
                     return;
                 }
@@ -93,12 +98,30 @@ export class UserLoginComponent implements OnDestroy {
             this.tokenService.set({
                 token: '123456789',
                 name: this.userName.value,
-                email: `cipchk@qq.com`,
+                email: `gb_1964@163.com`,
                 id: 10000,
                 time: +new Date
             });
             this.router.navigate(['/']);
         }, 1000);
+*/
+        this._passportService.login(this.userName.value, this.password.value).subscribe((res: any) => {
+            console.log('res =', res);
+            if (res.status === 'ok') {
+                console.log('login ok username =', this.userName.value);
+                this._localStorage.setObject('username', this.userName.value);
+                this.reuseTabService.clear();
+                this.tokenService.set({
+                    token: '123456789',
+                    name: this.userName.value,
+                    email: `gb_1964@163.com`,
+                    id: 10000,
+                    time: +new Date
+                });
+                this.router.navigate(['/']);
+            } else
+                this.error = `账户或密码错误`;
+        });
     }
 
     // region: social
@@ -110,6 +133,7 @@ export class UserLoginComponent implements OnDestroy {
             callback = 'https://cipchk.github.io/ng-alain/callback/' + type;
         else
             callback = 'http://localhost:4200/callback/' + type;
+        console.log('type =', type);
         switch (type) {
             case 'auth0':
                 url = `//cipchk.auth0.com/login?client=8gcNydIDzGBYxzqV0Vm1CX_RXH-wsWo5&redirect_uri=${decodeURIComponent(callback)}`;

@@ -11,6 +11,12 @@ import { ForgetComponent } from './forget/forget.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { Page404Component } from './404/404.component';
 import { Page500Component } from './500/500.component';
+import { TeamComponent } from './team/team.component';
+import { ProjectComponent } from './project/project.component';
+import { TemplateComponent } from './template/template.component';
+
+import { TeamService } from '../function/team.service';
+import { LocalStorage } from '../../core/local.storage';
 
 @NgModule({
   imports: [ SharedModule, PagesRoutingModule ],
@@ -21,7 +27,12 @@ import { Page500Component } from './500/500.component';
     ForgetComponent,
     MaintenanceComponent,
     Page404Component,
-    Page500Component
-  ]
+    Page500Component,
+
+      TeamComponent,
+      ProjectComponent,
+      TemplateComponent
+  ],
+    providers: [TeamService, LocalStorage]
 })
 export class PagesModule { }

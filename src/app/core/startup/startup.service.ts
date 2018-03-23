@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { I18NService } from '../i18n/i18n.service';
+//import { TeamService } from '../../routes/function/team.service';
 
 /**
  * 用于应用启动时
@@ -22,12 +23,15 @@ export class StartupService {
         private aclService: ACLService,
         private titleService: TitleService,
         private httpClient: HttpClient,
+        //private teamService: TeamService,
         private injector: Injector) { }
 
     load(): Promise<any> {
+        console.log('Promise');
         // only works with promises
         // https://github.com/angular/angular/issues/15088
         return new Promise((resolve, reject) => {
+
             zip(
                 this.httpClient.get(`assets/i18n/${this.i18n.defaultLang}.json`),
                 this.httpClient.get('assets/app-data.json')
