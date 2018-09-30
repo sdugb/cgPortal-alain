@@ -8,11 +8,14 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'app-function-myTemplates',
     templateUrl: './myTemplates.component.html',
+    providers: [TeamService, LocalStorage]
     //styleUrls: ['./myTemplates.component.less']
 })
 
 export class MyTemplatesComponent implements OnInit {
     userName: String;
+    userRole: String;
+
     templateList: any = [];
     templateTotal = 0;
 
@@ -31,7 +34,13 @@ export class MyTemplatesComponent implements OnInit {
 
     ngOnInit() {
         console.log('ngOnInit');
-        this.userName = this._localStorage.getObject('username');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            this._router.navigate(['/passport/login']);
+            return;
+        }
+        this.userName = currentUser.user.username;
+        this.userRole = currentUser.user.role;
         this.onClickRefreshTemplate();
     }
 
@@ -58,7 +67,7 @@ export class MyTemplatesComponent implements OnInit {
                 (searchName.length ? searchName.some(name => item.name.indexOf(name.name) !== -1) : true)
         };
         */
-        //this.userList = [ ...this.userList_copyData.filter(item => filterFunc(item)) ];
+        // this.userList = [ ...this.userList_copyData.filter(item => filterFunc(item)) ];
         /*
         this.teamList = [ ...this.teamList.sort((a, b) => {
             if (a[ this.sortName ] > b[ this.sortName ]) {
@@ -74,8 +83,11 @@ export class MyTemplatesComponent implements OnInit {
 
     onClickRefreshTemplate() {
         this.templateList = [];
-        this._teamService.getMyTemplates(this.userName).subscribe(data => {
-                this.templateList = data;
+        this._teamService.getTemplates(this.userName, this.userRole).subscribe(data => {
+                for (let i = 0; i < data.length; i++) {
+                    data[i].editFlag = false;
+                    this.templateList.push(data[i]);
+                }
                 this.templateTotal = data.length;
             },
             error => {
@@ -113,4 +125,18 @@ export class MyTemplatesComponent implements OnInit {
             this.onClickRefreshTemplate();
         });
     }
+
+    onEdit = function (template) {
+        template.editFlag = true;
+    };
+
+    editOK = function (template) {
+        this._teamService.setTemplate(template.name, template.stage).subscribe(data => {
+            this.onClickRefreshTemplate();
+        });
+    };
+
+    editCANCEL = function (template) {
+        template.editFlag = false;
+    };
 }

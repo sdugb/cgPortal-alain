@@ -21,6 +21,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
     `
 })
 export class HeaderUserComponent implements OnInit {
+    userName: String;
     constructor(
         public settings: SettingsService,
         private router: Router,

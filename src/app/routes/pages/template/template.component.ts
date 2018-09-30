@@ -13,8 +13,8 @@ import { LocalStorage } from '../../../core/local.storage';
 
 @Component({
     selector: 'app-pages-template',
-    templateUrl: './template.component.html'
-
+    templateUrl: './template.component.html',
+    providers: [TeamService, LocalStorage]
 })
 
 export class TemplateComponent implements OnInit {
@@ -53,7 +53,7 @@ export class TemplateComponent implements OnInit {
         this.validateForm = this.fb.group({
             name             : [ null, [ Validators.required ] ],
             alias            : [ null ],
-            user              : [ null ],
+            user             : [ null ],
             stage            : [ null ]
         });
     }
@@ -62,18 +62,17 @@ export class TemplateComponent implements OnInit {
         return this.validateForm.controls[ name ];
     }
 
-    onCreateTeam() {
-
-        console.log(this.getFormControl('name').value);
-        console.log(this.getFormControl('alias').value);
-        console.log(this.getFormControl('user').value);
-        console.log(this.getFormControl('stage').value);
-
-        let userName = this._localStorage.getObject('username');
-        let name = this.getFormControl('name').value;
-        let alias = this.getFormControl('alias').value;
-        let user = this.getFormControl('user').value;
-        let stage = this.getFormControl('stage').value;
+    onCreateTemplate() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            this._router.navigate(['/passport/login']);
+            return;
+        }
+        const userName = currentUser.user.username;
+        const name = this.getFormControl('name').value;
+        const alias = this.getFormControl('alias').value;
+        const user = this.getFormControl('user').value;
+        const stage = this.getFormControl('stage').value;
 
         this._teamService.createTemplate({
             user: userName, name: name, alias: alias, status: false, stage: stage}).subscribe(data => {
@@ -83,6 +82,6 @@ export class TemplateComponent implements OnInit {
     }
 
     onCancel() {
-        this._router.navigate(['function/myTeams']);
+        this._router.navigate(['function/myTemplates']);
     }
 }

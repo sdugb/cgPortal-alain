@@ -1,6 +1,303 @@
 <div nz-row [nzGutter]="16">
     <div nz-col [nzMd]="12">
         <nz-card nzTitle="创建团队">
+
+            <nz-steps [(nzCurrent)]="current">
+                <nz-step [nzTitle]="'团队概述'"></nz-step>
+                <nz-step [nzTitle]="'应用服务配置'"></nz-step>
+                <nz-step [nzTitle]="'应用服务部署配置'"></nz-step>
+                <nz-step [nzTitle]="'完成'"></nz-step>
+            </nz-steps>
+
+            <div class="steps-content">
+                <form nz-form [formGroup]="validateForm" >
+                    <div *ngIf="index=='First-content'">
+                        <div nz-form-item nz-row>
+
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="name" nz-form-item-required>团队名称</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzSize]="'large'" formControlName="name" [nzId]="'name'">
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="alias" nz-form-item-required>团队别名</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'alias'" formControlName="alias" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="scale" nz-form-item-required>团队规模</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-select style="width: 120px;" formControlName="scale"  [nzPlaceHolder]="'选择'" nzAllowClear>
+                                    <nz-option
+                                        *ngFor="let option of scaleList"
+                                        [nzLabel]="option.label"
+                                        [nzValue]="option"
+                                        [nzDisabled]="option.disabled">
+                                    </nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="index=='Second-content'">
+                        <div nz-form-item nz-row>
+
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="WWWPort" nz-form-item-required>网址端口PORT</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'WWWPort'" formControlName="WWWPort" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="host" nz-form-item-required>服务器IP</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'host'" formControlName="host" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="storageDir" nz-form-item-required>数据存储目录</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'storageDir'" formControlName="storageDir" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div *ngIf="index=='Third-content'">
+                        <div nz-form-item nz-row>
+
+                        </div>
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="sshPort" nz-form-item-required>SSH端口</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'sshPort'" formControlName="sshPort" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="sshUser" nz-form-item-required>SSH用户</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'sshUser'" formControlName="sshUser" >
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="sshPassword" nz-form-item-required>SSH密码</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'sshPassword'" formControlName="sshPassword" [nzType]="'password'">
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <!----
+                       <div nz-form-item nz-row>
+                           <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                               <label for="mongoDBurl" nz-form-item-required>数据库URL</label>
+                           </div>
+                           <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                               <nz-input [nzId]="'mongoDBurl'" formControlName="mongoDBurl" [nzPlaceHolder]="'http://211.87.224.168:27017'">
+                               </nz-input>
+                           </div>
+                       </div>
+
+                       <div nz-form-item nz-row>
+                           <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                               <label for="mongoDBuser" nz-form-item-required>账号</label>
+                           </div>
+                           <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                               <nz-input [nzId]="'mongoDBuser'" formControlName="mongoDBuser" [nzPlaceHolder]="'rcdb9'">
+                               </nz-input>
+                           </div>
+                       </div>
+
+                       <div nz-form-item nz-row>
+                           <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                               <label for="mongoDBpassword" nz-form-item-required>密码</label>
+                           </div>
+                           <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                               <nz-input [nzId]="'mongoDBpassword'" formControlName="mongoDBpassword" [nzType]="'password'"  [nzPlaceHolder]="'rcdb1234'">
+                               </nz-input>
+                           </div>
+                       </div>
+
+                       --->
+                    </div>
+                </form>
+            </div>
+            <div class="steps-action">
+                <button nz-button [nzType]="'default'" (click)="onCancel()">
+                    <span>取消</span>
+                </button>
+                <button nz-button [nzType]="'default'" (click)="pre()" *ngIf="current > 0">
+                    <span>上一步</span>
+                </button>
+                <button nz-button [nzType]="'default'" (click)="next()" *ngIf="current < 2">
+                    <span>下一步</span>
+                </button>
+                <button nz-button [nzType]="'primary'" (click)="onCreateTeam()" *ngIf="current === 2">
+                    <span>完成</span>
+                </button>
+            </div>
+        </nz-card>
+    </div>
+</div>
+
+
+<!---
+<div nz-row [nzGutter]="16">
+    <span nz-col [nzMd]="12">
+        <nz-card nzTitle="创建团队">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+                <nz-tab *ngFor="let tab of tabs" style="height:100px">
+                    <ng-template #nzTabHeading>
+                        Tab {{tab.index}}
+                    </ng-template>
+                    <span *ngIf="tab.name=='Tab 1'">
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="name" nz-form-item-required>团队名称</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzSize]="'large'" [nzId]="'name'" [nzPlaceHolder]="'teamName'">
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="alias" nz-form-item-required>团队别名</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-input [nzId]="'alias'" [(ngModel)]="alias" [nzPlaceHolder]="'新世界'">
+                                </nz-input>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row>
+                            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                                <label for="scale" nz-form-item-required>团队规模</label>
+                            </div>
+                            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                                <nz-select style="width: 120px;"  [(ngModel)]="scale" [nzPlaceHolder]="'选择'" nzAllowClear>
+                                    <nz-option
+                                        *ngFor="let option of scaleList"
+                                        [nzLabel]="option.label"
+                                        [nzValue]="option"
+                                        [nzDisabled]="option.disabled">
+                                    </nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+                        <div nz-form-item nz-row class="mb0">
+                            <div nz-form-control nz-col [nzSpan]="14" [nzXs]="24" [nzOffset]="6">
+                                <button nz-button (click)="onCancel()">取消</button>
+                                <button nz-button [nzType]="'primary'" (click)="onCreateTeam()">创建</button>
+                            </div>
+                        </div>
+                    </span>
+
+                    <span *ngIf="tab.name=='Tab 2'">
+                        <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                            <label for="url" nz-form-item-required>团队URL</label>
+                        </div>
+                        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                            <nz-input [nzId]="'alias'" [(ngModel)]="url" [nzPlaceHolder]="'http://'">
+                            </nz-input>
+                        </div>
+
+                        <div nz-form-item nz-row class="mb0">
+                            <div nz-form-control nz-col [nzSpan]="14" [nzXs]="24" [nzOffset]="6">
+                                <button nz-button (click)="onCancel()">取消</button>
+                                <button nz-button [nzType]="'primary'" (click)="onCreateTeam()">创建</button>
+                            </div>
+                        </div>
+                    </span>
+
+                    <span *ngIf="tab.name=='Tab 3'">
+                        <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                            <label for="mongoDBurl" nz-form-item-required>流程应用服务URL</label>
+                        </div>
+                        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                            <nz-input [nzId]="'mongoDBurl'" [(ngModel)]="mongoDBurl" [nzPlaceHolder]="'http://'">
+                            </nz-input>
+                        </div>
+
+                        <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                            <label for="mongoDBuser" nz-form-item-required>账号</label>
+                        </div>
+                        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                            <nz-input [nzId]="'mongoDBuser'"  [(ngModel)]="mongoDBuser" [nzPlaceHolder]="">
+                            </nz-input>
+                        </div>
+
+                        <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                            <label for="mongoDBassword" nz-form-item-required>密码</label>
+                        </div>
+                        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                            <nz-input [nzId]="'mongoDBassword'" [nzType]="'password'"[(ngModel)]="mongoDBassword" [nzPlaceHolder]="''">
+                            </nz-input>
+                        </div>
+
+                        <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+                            <label for="mongoDBname" nz-form-item-required>数据库名</label>
+                        </div>
+                        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+                            <nz-input [nzId]="'mongoDBname'"  [(ngModel)]="mongoDBname" [nzPlaceHolder]="">
+                            </nz-input>
+                        </div>
+
+                        <div nz-form-item nz-row class="mb0">
+                            <div nz-form-control nz-col [nzSpan]="14" [nzXs]="24" [nzOffset]="6">
+                                <button nz-button (click)="onCancel()">取消</button>
+                                <button nz-button [nzType]="'primary'" (click)="onCreateTeam()">创建</button>
+                            </div>
+                        </div>
+                    </span>
+                </nz-tab>
+            </nz-tabset>
+        </nz-card>
+    </span>
+</div>
+--->
+<!---
+<div nz-row [nzGutter]="16">
+    <div nz-col [nzMd]="12">
+        <nz-card nzTitle="创建团队">
             <form nz-form [formGroup]="validateForm" (ngSubmit)="_submitForm()">
                 <div nz-form-item nz-row>
                     <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
@@ -12,15 +309,7 @@
                     </div>
                 </div>
 
-                <div nz-form-item nz-row>
-                    <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
-                        <label for="alias" nz-form-item-required>团队别名</label>
-                    </div>
-                    <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
-                        <nz-input [nzId]="'alias'" formControlName="alias" [(ngModel)]="alias" [nzPlaceHolder]="'新世界'">
-                        </nz-input>
-                    </div>
-                </div>
+
 
                 <div nz-form-item nz-row>
                     <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
@@ -57,5 +346,6 @@
         </nz-card>
     </div>
 </div>
+--->
 
 

@@ -31,7 +31,6 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
         this.injector.get(_HttpClient).end();
         // 业务处理：一些通用操作
-        console.log('event =', event);
         switch (event.status) {
             case 200:
                 // 业务层级错误处理，以下假如响应体的 `status` 若不为 `0` 表示业务级异常
@@ -47,7 +46,6 @@ export class DefaultInterceptor implements HttpInterceptor {
                 //this.goTo('/users');
                 break;
             case 401: // 未登录状态码
-                console.log('event =', event);
                 //this.goTo('/passport/login');
                 break;
             case 403:
@@ -62,7 +60,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler):
         Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
 
-        console.log('url =', req.url);
+        //console.log('url =', req.url);
         // 统一加上服务端前缀
         let url = req.url;
         if (!url.startsWith('https://') && !url.startsWith('http://')) {

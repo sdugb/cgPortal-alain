@@ -10,6 +10,7 @@ import { Page404Component } from './404/404.component';
 import { Page500Component } from './500/500.component';
 import { TeamComponent } from './team/team.component';
 import { ProjectComponent } from './project/project.component';
+import { SubProjectComponent } from './subProject/subProject.component';
 import { TemplateComponent } from './template/template.component';
 
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
     { path: '500', component: Page500Component },
     { path: 'team', component: TeamComponent },
     { path: 'project', component: ProjectComponent },
+    { path: 'subProject', component: SubProjectComponent },
     { path: 'template', component: TemplateComponent }
 ];
 

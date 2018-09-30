@@ -13,8 +13,6 @@ import { StartupService } from '@core/startup/startup.service';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
 import { SimpleInterceptor } from '@delon/auth';
 
-//import { HttpModule } from '@angular/http';
-
 // angular i18n
 import { registerLocaleData } from '@angular/common';
 import localeZhHans from '@angular/common/locales/zh-Hans';
@@ -27,6 +25,12 @@ import { I18NService } from '@core/i18n/i18n.service';
 // third
 import { UEditorModule } from 'ngx-ueditor';
 import { NgxTinymceModule } from 'ngx-tinymce';
+
+import { AuthGuard } from './routes/passport/_guards/index';
+import { JwtInterceptor } from './routes/passport/_helpers/index';
+import { PassportService } from './routes/passport/passport.service';
+import { TeamService } from './routes/function/team.service';
+
 // JSON-Schema form
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
 
@@ -79,9 +83,19 @@ export function StartupServiceFactory(startupService: StartupService): Function 
         JsonSchemaModule
     ],
     providers: [
+
+        AuthGuard,
+        PassportService,
+        TeamService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtInterceptor,
+            multi: true
+        },
+
         { provide: LOCALE_ID, useValue: 'zh-Hans' },
-        { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
-        { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true},
+        //{ provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
+        //{ provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true},
         { provide: ALAIN_I18N_TOKEN, useClass: I18NService, multi: false },
         StartupService,
         {

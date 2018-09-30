@@ -1,0 +1,130 @@
+<div class="content__title">
+    <h1>
+        用户列表（总数：{{userTotal}})
+    </h1>
+</div>
+
+<div nz-row [nzGutter]="20">
+    <div nz-col [nzMd]="20">
+        <nz-card>
+            <nz-table #nzTable [nzDataSource]="userList">
+                <thead nz-thead>
+                <tr>
+                    <th nz-th><span>名称</span></th>
+                    <th nz-th><span>别名</span></th>
+                    <th nz-th><span>角色</span></th>
+                    <th nz-th><span>团队</span></th>
+                    <th nz-th><span>状态</span></th>
+                    <th nz-th><span>动作</span></th>
+                </tr>
+                </thead>
+                <tbody nz-tbody>
+                <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                    <tr nz-tbody-tr >
+                        <td nz-td>{{data.username}}</td>
+                        <td nz-td *ngIf="data.editFlag">
+                            <nz-input [(ngModel)]="data.alias"></nz-input>
+                        </td>
+                        <td nz-td *ngIf="!data.editFlag">
+                            {{data.alias}}
+                        </td>
+                        <td nz-td>{{data.roleAlias}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let role of roleList">
+                                        <span (click)="onClickRole(data, role)">{{role.name}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+
+                        <td nz-td>{{data.team}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let team of teamList">
+                                        <span (click)="onClickTeam(data, team)">{{team.alias}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+                        <td nz-td>{{data.enable}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let enable of enableList">
+                                        <span (click)="onClickEnbale(data, enable)">{{enable.name}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+                        <td nz-td *ngIf="!data.editFlag">
+
+                            <a (click)="onEditAlias(data)">编辑</a>
+                        </td>
+                        <td nz-td *ngIf="data.editFlag">
+                            <a (click)="editOKAlias(data)">确认</a>
+                            <span nz-table-divider></span>
+                            <a (click)="editCANCELAlias(data)">取消</a>
+                        </td>
+                    </tr>
+                </ng-template>
+                <!---
+                <ng-template ngFor let-data [ngForOf]="userList">
+                    <tr nz-tbody-tr>
+                        <td nz-td>{{data.username}}</td>
+                        <td nz-td *ngIf="data.editFlag">
+                            <nz-input [(ngModel)]="data.alias"></nz-input>
+                        </td>
+                        <td nz-td *ngIf="!data.editFlag">
+                            {{data.alias}}
+                        </td>
+                        <td nz-td>{{data.roleAlias}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let role of roleList">
+                                        <span (click)="onClickRole(data, role)">{{role.name}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+                        <td nz-td>{{data.team}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let team of teamList">
+                                        <span (click)="onClickTeam(data, team)">{{team.alias}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+                        <td nz-td>{{data.enable}}
+                            <nz-dropdown [nzTrigger]="'click'">
+                                <i class="anticon anticon-filter" nz-dropdown></i>
+                                <ul nz-menu>
+                                    <li nz-menu-item *ngFor="let enable of enableList">
+                                        <span (click)="onClickEnbale(data, enable)">{{enable.name}}</span>
+                                    </li>
+                                </ul>
+                            </nz-dropdown>
+                        </td>
+                        <td nz-td *ngIf="!data.editFlag">
+
+                            <a (click)="onEditAlias(data)">编辑</a>
+                        </td>
+                        <td nz-td *ngIf="data.editFlag">
+                            <a (click)="editOKAlias(data)">确认</a>
+                            <span nz-table-divider></span>
+                            <a (click)="editCANCELAlias(data)">取消</a>
+                        </td>
+                    </tr>
+                </ng-template>
+                ---->
+                </tbody>
+            </nz-table>
+        </nz-card>
+    </div>
+</div>
+

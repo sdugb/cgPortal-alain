@@ -31,16 +31,7 @@
         </nz-tab>
 
     </nz-tabset>
-    <div nz-form-item nz-row>
-        <div nz-col [nzSpan]="12">
-            <label nz-checkbox formControlName="remember">
-                <span>自动登录</span>
-            </label>
-        </div>
-        <div nz-col [nzSpan]="12" class="text-right">
-            <a class="forgot" (click)="msg.error('错误')">忘记密码？</a>
-        </div>
-    </div>
+
     <div nz-form-item>
         <button nz-button [nzType]="'primary'" [nzLoading]="loading" [nzSize]="'large'" class="ant-btn__block">
             <span>登录</span>

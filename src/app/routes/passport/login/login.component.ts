@@ -8,12 +8,13 @@ import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 import { PassportService } from '../passport.service';
 import { LocalStorage } from '../../../core/local.storage';
+import { TeamService } from '../../function/team.service';
 
 @Component({
     selector: 'passport-login',
     templateUrl: './login.component.html',
     styleUrls: [ './login.component.less' ],
-    providers: [ SocialService, LocalStorage, PassportService ]
+    providers: [ SocialService, LocalStorage, PassportService, TeamService ]
 })
 export class UserLoginComponent implements OnDestroy {
 
@@ -30,6 +31,7 @@ export class UserLoginComponent implements OnDestroy {
         private _passportService: PassportService,
         private settingsService: SettingsService,
         private socialService: SocialService,
+        private _teamService: TeamService,
         @Optional() @Inject(ReuseTabService) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         this.form = fb.group({
@@ -72,28 +74,19 @@ export class UserLoginComponent implements OnDestroy {
 
     submit() {
         this.error = '';
-/*
-        if (this.type === 0) {
-            this.userName.markAsDirty();
-            this.password.markAsDirty();
-            if (this.userName.invalid || this.password.invalid) return;
-        } else {
-            this.mobile.markAsDirty();
-            this.captcha.markAsDirty();
-            if (this.mobile.invalid || this.captcha.invalid) return;
-        }
-        // mock http
-        this.loading = true;
-        setTimeout(() => {
-            this.loading = false;
-            if (this.type === 0) {
-                if (this.userName.value !== 'gb' || this.password.value !== 'gbzz01') {
-                    this.error = `账户或密码错误`;
-                    return;
-                }
+        console.log(this.userName.value);
+        console.log(this.password.value);
+        this._passportService.login(this.userName.value, this.password.value).subscribe((userToken: any) => {
+            if (userToken.status === 1) {
+                this.error = userToken.message;
+                return;
             }
-
-            // 清空路由复用信息
+            localStorage.setItem('currentUser', JSON.stringify(userToken));
+            this._localStorage.setObject('userName', this.userName.value);
+            console.log(userToken.user);
+            this._localStorage.setObject('userAlias', userToken.user.alias);
+            this._localStorage.setObject('userRole', userToken.user.role);
+            this._localStorage.setObject('userTeam', userToken.user.team);
             this.reuseTabService.clear();
             this.tokenService.set({
                 token: '123456789',
@@ -102,25 +95,11 @@ export class UserLoginComponent implements OnDestroy {
                 id: 10000,
                 time: +new Date
             });
-            this.router.navigate(['/']);
-        }, 1000);
-*/
-        this._passportService.login(this.userName.value, this.password.value).subscribe((res: any) => {
-            console.log('res =', res);
-            if (res.status === 'ok') {
-                console.log('login ok username =', this.userName.value);
-                this._localStorage.setObject('username', this.userName.value);
-                this.reuseTabService.clear();
-                this.tokenService.set({
-                    token: '123456789',
-                    name: this.userName.value,
-                    email: `gb_1964@163.com`,
-                    id: 10000,
-                    time: +new Date
-                });
-                this.router.navigate(['/']);
-            } else
-                this.error = `账户或密码错误`;
+            this.router.navigate(['/function']);
+        }, error => {
+            console.log('error =', error);
+            this.msg.warning('抱歉，后台应用服务器没有启动（消息将于10秒后消失）', {nzDuration: 10000});
+            this.error = '后台应用服务器没有启动';
         });
     }
 

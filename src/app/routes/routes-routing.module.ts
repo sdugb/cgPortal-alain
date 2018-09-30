@@ -25,7 +25,8 @@ const routes: Routes = [
         path: '',
         component: LayoutDefaultComponent,
         children: [
-            { path: '', redirectTo: 'dashboard/v1', pathMatch: 'full' },
+            // { path: '', redirectTo: 'dashboard/v1', pathMatch: 'full' },
+            { path: '', redirectTo: '/passport/login', pathMatch: 'full' },
             { path: 'dashboard', redirectTo: 'dashboard/v1', pathMatch: 'full' },
             { path: 'dashboard/v1', component: DashboardV1Component },
             { path: 'dashboard/analysis', component: DashboardAnalysisComponent },
@@ -46,7 +47,9 @@ const routes: Routes = [
             { path: 'platform-users', redirectTo: 'platform-users/list', pathMatch: 'full' },
             { path: 'platform-users', loadChildren: './platform-users/platform-users.module#PlatformUsersModule' },
             { path: 'function', redirectTo: 'function/myTeams', pathMatch: 'full' },
-            { path: 'function', loadChildren: './function/function.module#FunctionModule' }
+            { path: 'function', loadChildren: './function/function.module#FunctionModule' },
+            // { path: 'admin', redirectTo: 'admin/userlist', pathMatch: 'full' },
+            { path: 'admin', loadChildren: './admin/admin.module#AdminModule' }
         ]
     },
     // 全屏布局
@@ -62,6 +65,7 @@ const routes: Routes = [
         path: 'passport',
         component: LayoutPassportComponent,
         children: [
+            { path: '', redirectTo: 'login', pathMatch: 'full' },
             { path: 'login', component: UserLoginComponent },
             { path: 'register', component: UserRegisterComponent },
             { path: 'register-result', component: UserRegisterResultComponent }

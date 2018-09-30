@@ -4,8 +4,8 @@ import { FunctionRoutingModule } from './function-routing.module';
 import { MyTeamsComponent } from './myTeams/myTeams.component';
 import { MyProjectsComponent } from './myProjects/myProjects.component';
 import { MyTemplatesComponent } from './myTemplates/myTemplates.component';
-import { LocalStorage } from '../../core/local.storage';
-import { TeamService } from './team.service';
+//import { LocalStorage } from '../../core/local.storage';
+//import { TeamService } from './team.service';
 const COMPONENT_NOROUNT = [];
 
 @NgModule({
@@ -19,7 +19,7 @@ const COMPONENT_NOROUNT = [];
         MyProjectsComponent,
         MyTemplatesComponent
     ],
-    providers: [ TeamService, LocalStorage],
+    providers: [],
     entryComponents: COMPONENT_NOROUNT
 })
 export class FunctionModule { }

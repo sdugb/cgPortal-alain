@@ -1,9 +1,171 @@
-<div class="content__title">
-    <h1>
-        我的团队和项目列表
-    </h1>
+<div nz-row [nzGutter]="20" *ngIf="teamFlag">
+    <div nz-col [nzMd]="20">
+        <nz-card nzTitle="我的团队（总数：{{teamTotal}})">
+            <ng-template #extra>
+                <a (click)="onClickCreateTeam()">创建团队</a>
+                <span nz-table-divider></span>
+                <a (click)="onClickRefreshTeam()">刷新</a>
+            </ng-template>
+            <nz-table #nzTable [nzDataSource]="teamList" [nzPageSize]="10">
+                <thead nz-thead>
+                <tr>
+                    <th nz-th nzExpand></th>
+                    <th nz-th><span>名称</span></th>
+                    <th nz-th><span>别名</span></th>
+                    <th nz-th><span>注册人</span></th>
+                    <th nz-th><span>服务在线</span></th>
+                    <th nz-th><span>规模</span></th>
+                    <th nz-th><span>动作</span></th>
+                </tr>
+                </thead>
+                <tbody nz-tbody>
+                <ng-template ngFor let-data [ngForOf]="teamList">
+                    <tr nz-tbody-tr>
+                        <td nz-td nzExpand>
+                            <nz-row-expand-icon (click)="onClickExpandTeam(data)"></nz-row-expand-icon>
+                        </td>
+                        <td nz-td>
+                            <a>{{data.name}}</a>
+                        </td>
+                        <td nz-td>{{data.alias}}</td>
+                        <td nz-td>{{data.user}}</td>
+                        <td nz-td>{{data.isKeepLiver}}</td>
+                        <td nz-td>{{data.scale_exp}}</td>
+                        <td nz-td>
+                            <span>
+                                <nz-popconfirm [nzTitle]="'确定要删除这个团队吗？'" (nzOnConfirm)="confirmTeam(data)" (nzOnCancel)="cancelTeam()">
+                                    <a nz-popconfirm>删除</a>
+                                </nz-popconfirm>
+                                <span nz-table-divider></span>
+                                <a (click)="onRunTeam(data)">启动</a>
+                                <span nz-table-divider></span>
+                                <a (click)="onGotoTeam(data)">转向</a>
+                                <span nz-table-divider></span>
+                                <a (click)="onSelectTeam(data)">选择</a>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="data.expand">
+                        <td></td>
+                        <td colspan="4">
+                            <div>网址: {{data.url}},    API: {{data.apiUrl}}</div>
+                            <div>数据库URL: {{data.mongoDBUrl_Out}}</div>
+                            <div>数据库名: {{data.mongoDBName}}, 用户: {{data.mongoDBUser}}, 密码: {{data.mongoDBPassword}}</div>
+                            <div>文件数据库名: {{data.mongoFileDBName}}, 用户: {{data.mongoFileDBUser}}, 密码: {{data.mongoFileDBPassword}}</div>
+                            <div>SSH端口: {{data.sshPort}}, User: {{data.sshUser}}, password: {{data.sshPassword}}</div>
+                            <div>数据库存储路径映射：{{data.storageDir}}</div>
+                        </td>
+                    </tr>
+                </ng-template>
+                </tbody>
+            </nz-table>
+        </nz-card>
+    </div>
+</div>
+    <!---
+    <div nz-col [nzMd]="16">
+        <nz-card>
+        <ng-template #extra>
+            <a (click)="onClickRefreshTeam()">刷新</a>
+            <span nz-table-divider></span>
+            <a (click)="onClickCreateTeam()">创建团队</a>
+        </ng-template>
+        <nz-table #nzTeamTable [nzDataSource]="teamList" nzSize="middle" [nzPageSize]="10">
+            <thead>
+            <tr>
+                <th nz-th nzExpand></th>
+                <th nz-th><span>名称</span></th>
+                <th nz-th><span>别名</span></th>
+                <th nz-th><span>规模</span></th>
+                <th nz-th><span>动作</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-template ngFor let-data [ngForOf]="nzTeamTable.data">
+                <tr>
+                    <td nzShowExpand (click)="onClickTeam(data)"></td>
+                    <td>{{data.name}}</td>
+                    <td>{{data.alias}}</td>
+                    <td>{{data.scale_exp}}</td>
+                    <td>
+                        <nz-popconfirm [nzTitle]="'确定要删除这个团队吗？'" (nzOnConfirm)="confirmTeam(data)" (nzOnCancel)="cancelTeam()">
+                            <a nz-popconfirm>删除</a>
+                        </nz-popconfirm>
+                        <span nz-table-divider></span>
+                        <a (click)="onGotoTeam(data)">转向</a>
+                    </td>
+                </tr>
+                <tr *ngIf="data.expand">
+                    <td></td>
+                    <td colspan="4">
+                        <div>网址: {{data.url}} </div>
+                        <div>API: {{data.apiUrl}} </div>
+                        <div>流程URL: {{data.mongoDBurl}}</div>
+                        <div>流程数据库user: {{data.mongoDBuser}}, 密码: {{data.mongoDBpassword}}</div>
+                        <div>数据库名: {{data.mongoDBname}}</div>
+                    </td>
+                </tr>
+            </ng-template>
+            </tbody>
+        </nz-table>
+
+        </nz-card>
+    </div>
+    --->
+<div nz-row [nzGutter]="20" *ngIf="!teamFlag">
+    <div nz-col [nzMd]="20">
+        <nz-card  nzTitle="{{subProjectTitle}}（总数：{{subProjectTotal}})">
+            <ng-template #extra>
+                <span nz-table-divider></span>
+                <a (click)="onClickBack()">回退</a>
+            </ng-template>
+            <nz-table #nzTable [nzDataSource]="subProjectList" [nzPageSize]="10">
+                <thead nz-thead>
+                <tr>
+                    <th nz-th nzExpand></th>
+                    <th nz-th><span>名称</span></th>
+                    <th nz-th><span>主项目</span></th>
+                    <th nz-th><span>团队</span></th>
+                    <th nz-th><span>模版</span></th>
+                    <th nz-th><span>动作</span></th>
+                </tr>
+                </thead>
+                <tbody nz-tbody>
+                    <tr nz-tbody-tr *ngFor="let data of subProjectList; let i = index">
+                        <td nz-td nzExpand>
+                            <nz-row-expand-icon (click)="onClickExpandSubProject(data)"></nz-row-expand-icon>
+                        </td>
+                        <td nz-td>
+                            <a>{{data.name}}</a>
+                        </td>
+                        <td nz-td>{{data.project}}</td>
+                        <td nz-td>{{data.team}}</td>
+                        <td nz-td>{{data.templateName}}</td>
+                        <td nz-td>
+                            <span>
+                                <nz-popconfirm [nzTitle]="'确定要删除这个子项目吗？'" (nzOnConfirm)="confirmSubProject(data)" (nzOnCancel)="cancelSubProject()">
+                                    <a nz-popconfirm>删除</a>
+                                </nz-popconfirm>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr nz-tbody-tr *ngIf="data.expand">
+                        <td nz-td></td>
+                        <td nz-td colspan="8">
+                            <div>流程模版：{{data.templateStage}}</div>
+                            <div>媒体数据库：{{data.DAMurl}}</div>
+                            <div>账号：{{data.DAMuser}}</div>
+                            <div>API: {{data.apiKey}}</div>
+                            <div>projectID: {{data.projectID}}</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
+    </div>
 </div>
 
+<!----
 <div nz-row [nzGutter]="16">
     <div nz-col [nzMd]="12">
         <nz-card nzTitle="我的团队（总数：{{teamTotal}})">
@@ -12,120 +174,99 @@
                 <span nz-table-divider></span>
                 <a (click)="onClickCreateTeam()">创建团队</a>
             </ng-template>
-            <nz-table #nzTable [nzDataSource]="teamList" [nzPageSize]="10">
+            <nz-table [nzDataSource]="teamList" [nzPageSize]="10">
                 <thead nz-thead>
                 <tr>
+                    <th nz-th nzExpand></th>
                     <th nz-th><span>名称</span></th>
                     <th nz-th><span>别名</span></th>
                     <th nz-th><span>规模</span></th>
-                    <th nz-th><span>URL</span>
-                    </th>
                     <th nz-th><span>动作</span></th>
                 </tr>
                 </thead>
                 <tbody nz-tbody>
-                <tr nz-tbody-tr *ngFor="let data of teamList">
-                    <td nz-td>
-                        <a>{{data.name}}</a>
-                    </td>
-                    <td nz-td>{{data.alias}}</td>
-                    <td nz-td>{{data.scale}}</td>
-                    <td nz-td>{{data.url}}</td>
-                    <td nz-td>
+                <ng-template ngFor let-data [ngForOf]="teamList">
+                    <tr nz-tbody-tr>
+                        <td nz-td nzExpand>
+                            <nz-row-expand-icon (click)="onClickExpandTeam(data)"></nz-row-expand-icon>
+                        </td>
+                        <td nz-td>
+                            <a>{{data.name}}</a>
+                        </td>
+                        <td nz-td>{{data.alias}}</td>
+                        <td nz-td>{{data.scale_exp}}</td>
+
+                        <td nz-td>
                             <span>
                                 <a (click)="onSelectTeam(data)">选择</a>
                                 <span nz-table-divider></span>
-                                <nz-dropdown>
-                                    <a class="ant-dropdown-link" nz-dropdown>
-                                        更多<i class="anticon anticon-down"></i>
-                                    </a>
-                                    <ul nz-menu>
-                                        <li nz-menu-item>
-                                            <nz-popconfirm [nzTitle]="'确定要删除这个团队吗？'" (nzOnConfirm)="confirmTeam(data)" (nzOnCancel)="cancelTeam()">
-                                                <a nz-popconfirm>删除</a>
-                                            </nz-popconfirm>
-                                        </li>
-                                        <li nz-menu-item (click)="onGotoTeam(data)">转向</li>
-                                    </ul>
-                                </nz-dropdown>
+                                <nz-popconfirm [nzTitle]="'确定要删除这个团队吗？'" (nzOnConfirm)="confirmTeam(data)" (nzOnCancel)="cancelTeam()">
+                                    <a nz-popconfirm>删除</a>
+                                </nz-popconfirm>
+                                <span nz-table-divider></span>
+                                <a (click)="onGotoTeam(data)">转向</a>
                             </span>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                    <tr nz-tbody-tr *ngIf="data.expand">
+                        <td nz-td></td>
+                        <td nz-td colspan="4">
+                            <div>网址: {{data.url}} </div>
+                            <div>API: {{data.apiUrl}} </div>
+                            <div>流程URL: {{data.mongoDBurl}}</div>
+                            <div>流程数据库user: {{data.mongoDBuser}}, 密码: {{data.mongoDBpassword}}</div>
+                            <div>数据库名: {{data.mongoDBname}}</div>
+                        </td>
+                    </tr>
+                </ng-template>
                 </tbody>
             </nz-table>
         </nz-card>
     </div>
     <div nz-col [nzMd]="12">
-        <nz-card nzTitle="{{subProjectTitle}}（总数：{{subProjectTotal}})">
-            <ng-template #extra>
-                <a (click)="onClickRefreshSubProject()">刷新</a>
-            </ng-template>
+        <nz-card  nzTitle="{{subProjectTitle}}（总数：{{subProjectTotal}})">
             <nz-table #nzTable [nzDataSource]="subProjectList" [nzPageSize]="10">
                 <thead nz-thead>
                 <tr>
+                    <th nz-th nzExpand></th>
                     <th nz-th><span>名称</span></th>
-                    <th nz-th><span>描述</span></th>
-                    <th nz-th><span>项目名称</span></th>
+                    <th nz-th><span>团队</span></th>
+                    <th nz-th><span>模版</span></th>
                     <th nz-th><span>动作</span></th>
                 </tr>
                 </thead>
                 <tbody nz-tbody>
-                <tr nz-tbody-tr *ngFor="let data of subProjectList">
-                    <td nz-td>{{data.name}}</td>
-                    <td nz-td>{{data.description}}</td>
-                    <td nz-td>{{data.project}}</td>
+                <tr nz-tbody-tr *ngFor="let data of subProjectList; let i = index">
+                    <td nz-td nzExpand>
+                        <nz-row-expand-icon (click)="onClickExpandSubProject(data)"></nz-row-expand-icon>
+                    </td>
                     <td nz-td>
-                        <span>
-                            <nz-popconfirm [nzTitle]="'确定要删除这个子项目吗？'" (nzOnConfirm)="confirmSubProject(data)" (nzOnCancel)="cancelSubProject()">
-                                <a nz-popconfirm>删除</a>
-                            </nz-popconfirm>
-                        </span>
+                        <a>{{data.name}}</a>
+                    </td>
+                    <td nz-td>{{data.team}}</td>
+                    <td nz-td>{{data.templateName}}</td>
+                    <td nz-td>
+                            <span>
+                                <nz-popconfirm [nzTitle]="'确定要删除这个子项目吗？'" (nzOnConfirm)="confirmSubProject(data)" (nzOnCancel)="cancelSubProject()">
+                                    <a nz-popconfirm>删除</a>
+                                </nz-popconfirm>
+                            </span>
+                    </td>
+                </tr>
+                <tr nz-tbody-tr *ngIf="data.expand">
+                    <td nz-td></td>
+                    <td nz-td colspan="8">
+                        <div>流程模版：{{data.templateStage}}</div>
+                        <div>媒体数据库：{{data.DAMurl}}</div>
+                        <div>账号：{{data.DAMuser}}</div>
+                        <div>API: {{data.apiKey}}</div>
+                        <div>projectID: {{data.projectID}}</div>
                     </td>
                 </tr>
                 </tbody>
             </nz-table>
         </nz-card>
     </div>
-    <!---
-        <div nz-col [nzMd]="12">
-            <nz-card nzTitle="{{subProjectTitle}}（总数：{{subProjectTotal}})">
-                <ng-template #extra>
-                    <a (click)="onClickRefreshSubProject()">刷新</a>
-                </ng-template>
-                <nz-table #nzTable [nzDataSource]="subProjectList" [nzPageSize]="10">
-                    <thead nz-thead>
-                    <tr>
-                        <th nz-th><span>名称</span></th>
-                        <th nz-th><span>描述</span></th>
-                        <th nz-th><span>项目名称</span></th>
-                        <th nz-th><span>动作</span></th>
-                    </tr>
-                    </thead>
-                    <tbody nz-tbody>
-                    <tr nz-tbody-tr *ngFor="let data of subProjectList">
-                        <td nz-td>{{data.name}}</td>
-                        <td nz-td>{{data.description}}</td>
-                        <td nz-td>{{data.project}}</td>
-                        <td nz-td>
-                                <span>
-                                    <a (click)="onSelectUser(data)">选择</a>
-                                    <span nz-table-divider></span>
-                                    <nz-dropdown>
-                                        <a class="ant-dropdown-link" nz-dropdown>
-                                            更多<i class="anticon anticon-down"></i>
-                                        </a>
-                                        <ul nz-menu>
-                                            <li nz-menu-item>删除</li>
-                                            <li nz-menu-item>转向</li>
-                                        </ul>
-                                    </nz-dropdown>
-                                </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </nz-table>
-            </nz-card>
-        </div>
-     --->>
-    </div>
+</div>
 
+--->

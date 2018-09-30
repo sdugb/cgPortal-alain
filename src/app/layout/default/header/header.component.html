@@ -1,7 +1,7 @@
 <div class="logo">
     <a [routerLink]="['/']">
-        <img class="expanded" src="./assets/img/sdu.png" alt="{{settings.app.name}}" style="max-height:40px;" />
-        <img class="collapsed" src="./assets/img/logo.svg" alt="{{settings.app.name}}" style="max-height:30px;" />
+        <img class="expanded" src="./assets/img/cgteam.png" alt="CGTeam" style="max-height:40px;" />
+        <img class="collapsed" src="./assets/img/cgteam.png" alt="{{settings.app.name}}" style="max-height:30px;" />
     </a>
 </div>
 <div class="top-nav-wrap">
@@ -11,17 +11,24 @@
                 <i class="anticon anticon-menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </li>
+        <li>
+            <nz-dropdown>
+                <a class="ant-dropdown-link" nz-dropdown >
+                    <h2>CGTeam</h2>
+                </a>
+            </nz-dropdown>
+        </li>
     </ul>
     <ul class="top-nav">
-        <!-- Notify -->
+        <!-- Notify
         <li>
             <header-notify></header-notify>
         </li>
-        <!-- Task -->
+        <!-- Task
         <li class="hidden-xs">
             <header-task></header-task>
         </li>
-        <!-- App Icons -->
+        <!-- App Icons
         <li class="hidden-xs">
             <header-icon></header-icon>
         </li>

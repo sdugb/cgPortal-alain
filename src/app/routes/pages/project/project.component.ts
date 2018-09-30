@@ -15,11 +15,21 @@ import { LocalStorage } from '../../../core/local.storage';
     selector: 'app-pages-project',
     templateUrl: './project.component.html',
     styleUrls: ['./project.component.css'],
+    providers: [TeamService, LocalStorage]
 })
 
 export class ProjectComponent implements OnInit {
     validateForm: FormGroup;
-    scaleList: any = [];
+    userName: String;
+    templateList: any = [];
+    designToolList: any = [];
+    renderList: any = [];
+    timeUnitList: any = [];
+    xResolution: number;
+    yResolution: number;
+    render: String;
+    timeUnit: String;
+    designTool: String;
 
     current = 0;
     index = 'First-content';
@@ -34,10 +44,6 @@ export class ProjectComponent implements OnInit {
         this.changeContent();
     }
 
-    done() {
-        this.msg.success('done');
-    }
-
     changeContent() {
         switch (this.current) {
             case 0: {
@@ -49,7 +55,11 @@ export class ProjectComponent implements OnInit {
                 break;
             }
             case 2: {
-                this.index = 'third-content';
+                this.index = 'Third-content';
+                break;
+            }
+            case 3: {
+                this.index = 'Forth-content';
                 break;
             }
             default: {
@@ -69,12 +79,30 @@ export class ProjectComponent implements OnInit {
                 private msg: NzMessageService,
                 private _localStorage: LocalStorage,
                 private _router: Router) {
+        this.designToolList = ['maya2014', 'maya2015', 'maya2016', 'maya2017', 'maya2018', '3dsMax2012', '3dsMax2014', '3dsMax2016', '3dsMax2018'];
+        this.renderList = ['arnold', 'redshift', 'Vray', 'mayaSoftware', 'mayaHardware'];
 
-        this.scaleList = [
-            { value: '1', label: '5-10人'},
-            { value: '2', label: '10-30人'},
-            { value: '3', label: '30人以上'}
-        ];
+        this.timeUnitList = ['game: 15fps',
+                            'film: 24fps',
+                            'pal: 25fps',
+                            'ntsc: 30fps',
+                            'show: 48fps',
+                            'palf: 50fpa',
+                            'ntscf: 60fps'];
+        this.designTool = 'maya2014'
+        this.render = 'arnold';
+        this.timeUnit = 'pal: 25fps';
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            this._router.navigate(['/']);
+            return;
+        }
+        this.userName = currentUser.user.username;
+        this.xResolution = 1920;
+        this.yResolution = 1280;
+        this._teamService.getMyTemplates(this.userName).subscribe(data => {
+            this.templateList = data;
+        });
     }
 
     updateConfirmValidator() {
@@ -96,36 +124,37 @@ export class ProjectComponent implements OnInit {
         this.validateForm = this.fb.group({
             name             : [ null, [ Validators.required ] ],
             alias            : [ null ],
-            url              : [ null ],
-            scale            : [ null ]
+            designTool       : [ null ],
+            render           : [ null ],
+            timeUnit         : [ null ],
+            xResolution      : [ null ],
+            yResolution      : [ null ]
         });
+
     }
 
     getFormControl(name) {
         return this.validateForm.controls[ name ];
     }
 
-    onCreateTeam() {
-
-        console.log(this.getFormControl('name').value);
-        console.log(this.getFormControl('alias').value);
-        console.log(this.getFormControl('url').value);
-        console.log(this.getFormControl('scale').value);
-
-        let userName = this._localStorage.getObject('username');
-        let name = this.getFormControl('name').value;
-        let alias = this.getFormControl('alias').value;
-        let url = this.getFormControl('url').value;
-        let scale = this.getFormControl('scale').value;
-
-        this._teamService.createTeam({
-            user: userName, name: name, alias: alias, url: url, scale: scale.value}).subscribe(data => {
-            this._router.navigate(['/function/myTeams']);
+    onCreateProject() {
+        const name = this.getFormControl('name').value;
+        const alias = this.getFormControl('alias').value;
+        const project = {name: name,
+            user: this.userName,
+            alias: alias,
+            designTool: this.designTool,
+            render: this.render,
+            timeUnit: this.timeUnit,
+            xResolution: this.xResolution,
+            yResolution: this.yResolution};
+        this._teamService.createProject(project).subscribe(data => {
+            this._router.navigate(['function/myProjects']);
+            this.msg.success('done');
         });
-
     }
 
     onCancel() {
-        this._router.navigate(['function/myTeams']);
+        this._router.navigate(['function/myProjects']);
     }
 }

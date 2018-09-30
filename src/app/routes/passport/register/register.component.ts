@@ -2,14 +2,17 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
+import { PassportService } from '../passport.service';
+import { LocalStorage } from '@core/local.storage';
 
 @Component({
     selector: 'passport-register',
     templateUrl: './register.component.html',
-    styleUrls: [ './register.component.less' ]
+    styleUrls: [ './register.component.less' ],
+    providers: [ LocalStorage, PassportService ]
 })
 export class UserRegisterComponent implements OnDestroy {
-
+    teamName: String;
     form: FormGroup;
     error = '';
     type = 0;
@@ -23,8 +26,13 @@ export class UserRegisterComponent implements OnDestroy {
         pool: 'exception'
     };
 
-    constructor(fb: FormBuilder, private router: Router, public msg: NzMessageService) {
+    constructor(fb: FormBuilder,
+                private router: Router,
+                public msg: NzMessageService,
+                private _localStorage: LocalStorage,
+                private _passportService: PassportService) {
         this.form = fb.group({
+            userName: [null, [Validators.required, Validators.minLength(2)]],
             mail: [null, [Validators.email]],
             password: [null, [Validators.required, Validators.minLength(6), UserRegisterComponent.checkPassword.bind(this)]],
             confirm: [null, [Validators.required, Validators.minLength(6), UserRegisterComponent.passwordEquar]],
@@ -58,6 +66,7 @@ export class UserRegisterComponent implements OnDestroy {
 
     // region: fields
 
+    get userName() { return this.form.controls.userName; }
     get mail() { return this.form.controls.mail; }
     get password() { return this.form.controls.password; }
     get confirm() { return this.form.controls.confirm; }
@@ -83,17 +92,27 @@ export class UserRegisterComponent implements OnDestroy {
     // endregion
 
     submit() {
-        this.error = '';
-        for (const i in this.form.controls) {
-            this.form.controls[i].markAsDirty();
-        }
-        if (this.form.invalid) return;
-        // mock http
         this.loading = true;
-        setTimeout(() => {
+        console.log('submit');
+        this._passportService.register(this.userName.value, this.password.value).subscribe((res: any) => {
             this.loading = false;
-            this.router.navigate(['/passport/register-result']);
-        }, 1000);
+            this.router.navigate(['/passport/login']);
+        }, error => {
+            this.error = `账户或密码错误`;
+        });
+        /*
+        this.loading = true;
+        this._passportService.login().subscribe(data => {
+            this.teamName = data;
+            console.log('teamName =', this.teamName);
+            this._localStorage.setObject('teamName', this.teamName);
+            this._passportService.register(this.username.value, this.password.value, this.teamName).subscribe((res: any) => {
+                console.log('res =', res);
+                this.loading = false;
+                this.router.navigate(['/']);
+            });
+        });
+        */
     }
 
     ngOnDestroy(): void {

@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'app-function-myProjects',
     templateUrl: './myProjects.component.html',
+    providers: [TeamService, LocalStorage],
     styleUrls: ['./myProjects.component.less']
 })
 
@@ -18,49 +19,58 @@ export class MyProjectsComponent implements OnInit {
     projectTotal = 0;
     subProjectTotal = 0;
     userName: String;
+    userRole: String;
     projectName: string;
     subProjectName: string;
     initMyTitle: any = {};
     subProjectTitle: string;
+    selectedProject = null;
+    selectedSubProject = null;
+    projectFlag = true;
 
     constructor(
         private _localStorage: LocalStorage,
         private _teamService: TeamService,
         private msg: NzMessageService,
-        private _router: Router) {}
+        private _router: Router) {
+        console.log('myProjects');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            this._router.navigate(['/']);
+            return;
+        }
+        this.userName = currentUser.user.username;
+        this.userRole = currentUser.user.role;
+    }
 
     ngOnInit() {
-        this.userName = this._localStorage.getObject('username');
         this.onClickRefreshProject();
     }
 
     onClickRefreshProject() {
         this.projectList = [];
-        this.userName = this._localStorage.getObject('username');
-        this._teamService.getMyProjects(this.userName).subscribe(data => {
-                this.projectList = data;
-                if (this.projectList === []) {
-                    this.projectName = '';
+        this._teamService.getProjects(this.userName, this.userRole).subscribe(data => {
+                for (let i = 0 ; i < data.length; i++) {
+                    const project = data[i];
+                    this.projectList = [ ...this.projectList, {
+                        key    : i,
+                        name: project.name,
+                        alias: project.alias,
+                        user: project.user,
+                        timeUnit: project.timeUnit,
+                        render: project.render,
+                        designTool: project.designTool,
+                        xResolution: project.xResolution,
+                        yResolution: project.yResolution,
+                        enable: project.enable,
+                        expand: false
+                    }];
                 }
                 this.projectTotal = data.length;
-                this.projectName = this.projectList[0].name;
-                this._localStorage.setObject('projectName', this.projectName);
-                this.subProjectTitle = '"' + this.projectName + '"的子项目：';
-                this.subProjectList = [];
-                this._teamService.getMySubProjects(this.userName).subscribe(data1 => {
-                        for (let i = 0; i < data1.length; i++) {
-                            if (data1[i].project === this.projectName)
-                                this.subProjectList.push(data1[i]);
-                        }
-                        this.subProjectTotal = data1.length;
-                    },
-                    error => {
-                        this.subProjectList = [];
-                    });
             },
             error => {
                 this.projectList = [];
-                this._localStorage.setObject('projectName', '');
+                localStorage.setItem('projectName', '');
             });
     }
 
@@ -75,16 +85,19 @@ export class MyProjectsComponent implements OnInit {
         });
     }
 
-    onSelectProject(subProject) {
-        this._localStorage.setObject('projectName', this.projectName);
-        this.projectName = subProject.name;
+    onSelectProject(projectName) {
+        this.projectName = projectName;
         this.subProjectTitle = '"' + this.projectName + '"的子项目：';
         this.subProjectList = [];
-        this._teamService.getMySubProjects(this.userName).subscribe(data => {
+        this.subProjectTotal = 0;
+        this._teamService.getSubProjects(this.projectName).subscribe(data => {
+            console.log(data);
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].project === this.projectName)
                         this.subProjectList.push(data[i]);
                 }
+                this.subProjectTotal = this.subProjectList.length;
+                this.projectFlag = false;
             },
             error => {
                 this.subProjectList = [];
@@ -95,13 +108,53 @@ export class MyProjectsComponent implements OnInit {
         this._router.navigate(['/pages/project']);
     }
 
-    onCreateSubProject(project) {
-        //Cookie.set('projectName', this.projectList[index].name);
-        this._router.navigate(['/dashboard/subProject']);
+    onClickCreateSubProject(projectName) {
+        console.log(projectName);
+        this._localStorage.setObject('projectName', projectName);
+        localStorage.setItem('currentProjectName', projectName);
+        this._router.navigate(['/pages/subProject']);
     }
 
     cancelSubProject() {
         this.msg.info('click cancel');
+    }
+
+    confirmSubProject = (subProject) => {
+        this.msg.info('click confirm');
+        this._teamService.deleteSubProject(subProject.name).subscribe(data => {
+            this.onSelectProject(this.projectName);
+        });
+    }
+
+    onClickExpandProject(project) {
+        if (this.selectedProject === null) {
+            project.expand = true;
+        } else if (this.selectedProject === project) {
+            project.expand = !project.expand;
+        } else {
+            this.selectedProject.expand = false;
+            this.selectedProject.nzShowExpand = true;
+            project.expand = true;
+        }
+        this.selectedProject = project;
+    }
+
+    onClickExpandSubProject(subProject) {
+        console.log('onClickExpand');
+        if (this.selectedSubProject === null) {
+            subProject.expand = true;
+        } else if (this.selectedSubProject === subProject) {
+            subProject.expand = !subProject.expand;
+        } else {
+            this.selectedSubProject.expand = false;
+            this.selectedSubProject.nzShowExpand = true;
+            subProject.expand = true;
+        }
+        this.selectedSubProject = subProject;
+    }
+
+    onClickBack() {
+        this.projectFlag = true;
     }
 }
 
